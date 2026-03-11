@@ -1,0 +1,48 @@
+# Android generated
+*.iml
+.gradle/
+/local.properties
+/.idea/caches/
+/.idea/libraries/
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+
+# Signing & secrets
+secrets.properties
+*.jks
+*.keystore
+
+# Google Services
+google-services.json
+
+# Kotlin
+*.class
+*.jar
+bin/
+gen/
+out/
+proguard/
+
+# Gradle wrapper
+!gradle/wrapper/gradle-wrapper.jar
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+*.iws
+/misc.xml
+/deploymentTargetDropDown.xml
+/render.experimental.xml
+
+# OS
+Thumbs.db
+ehthumbs.db
