@@ -6,6 +6,20 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.kitewatch.database.converter.RoomTypeConverters
+import com.kitewatch.database.dao.AccountBindingDao
+import com.kitewatch.database.dao.AlertDao
+import com.kitewatch.database.dao.ChargeRateDao
+import com.kitewatch.database.dao.FundEntryDao
+import com.kitewatch.database.dao.GmailFilterDao
+import com.kitewatch.database.dao.GmailScanCacheDao
+import com.kitewatch.database.dao.GttRecordDao
+import com.kitewatch.database.dao.HoldingDao
+import com.kitewatch.database.dao.OrderDao
+import com.kitewatch.database.dao.OrderHoldingDao
+import com.kitewatch.database.dao.PnlMonthlyCacheDao
+import com.kitewatch.database.dao.SyncEventDao
+import com.kitewatch.database.dao.TransactionDao
+import com.kitewatch.database.dao.WorkerHandoffDao
 import com.kitewatch.database.entity.AccountBindingEntity
 import com.kitewatch.database.entity.ChargeRateEntity
 import com.kitewatch.database.entity.FundEntryEntity
@@ -54,8 +68,35 @@ import com.kitewatch.database.entity.WorkerHandoffEntity
 )
 @TypeConverters(RoomTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
-    // DAOs — stubbed here; full implementations in T-018 through T-020.
-    // Each function name matches the naming convention in DatabaseModule (T-021).
+    abstract fun orderDao(): OrderDao
+
+    abstract fun holdingDao(): HoldingDao
+
+    abstract fun orderHoldingDao(): OrderHoldingDao
+
+    abstract fun transactionDao(): TransactionDao
+
+    abstract fun fundEntryDao(): FundEntryDao
+
+    abstract fun gttRecordDao(): GttRecordDao
+
+    // --- START MODIFICATION ---
+    abstract fun accountBindingDao(): AccountBindingDao
+
+    abstract fun chargeRateDao(): ChargeRateDao
+
+    abstract fun alertDao(): AlertDao
+
+    abstract fun syncEventDao(): SyncEventDao
+
+    abstract fun pnlMonthlyCacheDao(): PnlMonthlyCacheDao
+
+    abstract fun workerHandoffDao(): WorkerHandoffDao
+
+    abstract fun gmailScanCacheDao(): GmailScanCacheDao
+
+    abstract fun gmailFilterDao(): GmailFilterDao
+    // --- END MODIFICATION ---
 
     companion object {
         const val DATABASE_NAME = "kitewatch.db"
