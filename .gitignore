@@ -1,15 +1,8 @@
 # Android generated
 *.iml
 .gradle/
+**/build/
 /local.properties
-/.idea/caches/
-/.idea/libraries/
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build/
 /captures/
 .externalNativeBuild/
 .cxx/
@@ -25,24 +18,32 @@ secrets.properties
 # Google Services
 google-services.json
 
-# Kotlin
+# IntelliJ IDEA / Android Studio
+.idea/
+*.iws
+*.ipr
+/misc.xml
+/deploymentTargetDropDown.xml
+/render.experimental.xml
+
+# Kotlin / Java
 *.class
-*.jar
 bin/
 gen/
 out/
 proguard/
 
-# Gradle wrapper
+# Gradle wrapper (keep the JAR)
 !gradle/wrapper/gradle-wrapper.jar
 !**/gradle/wrapper/gradle-wrapper.jar
 
-# IntelliJ IDEA
-*.iws
-/misc.xml
-/deploymentTargetDropDown.xml
-/render.experimental.xml
+# Room schema exports (track these — they are used for migration testing)
+# schemas/
 
 # OS
+.DS_Store
 Thumbs.db
 ehthumbs.db
+
+# Editor
+.vscode/
