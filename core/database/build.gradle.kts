@@ -16,6 +16,10 @@ android {
     kotlinOptions { jvmTarget = "17" }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     implementation(project(":core:domain"))
     implementation(libs.hilt.android)
@@ -28,4 +32,8 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.room.testing)
     testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.room.testing)
+    androidTestImplementation(libs.junit.android.ext)
+    androidTestImplementation(libs.androidx.test.runner)
 }
