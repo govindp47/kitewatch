@@ -21,6 +21,8 @@ mockk = "1.13.12"
 turbine = "1.1.0"
 robolectric = "4.13"
 androidxTest = "1.6.1"
+ktlint = "12.1.2"
+detekt = "1.23.7"
 
 [libraries]
 # AndroidX Core
@@ -115,6 +117,10 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+
+# Code quality
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 # Convention plugins (defined in build-logic)
 kitewatch-android-library = { id = "kitewatch.android.library", version = "unspecified" }

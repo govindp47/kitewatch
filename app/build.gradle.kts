@@ -9,13 +9,15 @@ plugins {
 
 // Load secrets.properties — falls back gracefully to empty if absent (CI injects via env)
 val secretsFile = rootProject.file("secrets.properties")
-val secrets = Properties().apply {
-    if (secretsFile.exists()) secretsFile.inputStream().use { load(it) }
-}
+val secrets =
+    Properties().apply {
+        if (secretsFile.exists()) secretsFile.inputStream().use { load(it) }
+    }
 
-fun secret(key: String): String = secrets.getProperty(key)
-    ?: System.getenv(key)
-    ?: ""
+fun secret(key: String): String =
+    secrets.getProperty(key)
+        ?: System.getenv(key)
+        ?: ""
 
 android {
     namespace = "com.kitewatch.app"
@@ -31,7 +33,8 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = secrets.getProperty("KEYSTORE_PATH")
+            storeFile = secrets
+                .getProperty("KEYSTORE_PATH")
                 ?.let { rootProject.file(it) }
                 ?: rootProject.file(System.getenv("KEYSTORE_PATH") ?: "keystore.jks")
             storePassword = secret("KEYSTORE_PASSWORD")
