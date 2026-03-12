@@ -1,0 +1,25 @@
+#!/bin/sh
+# KiteWatch pre-commit hook
+# Runs ktlint and detekt on staged Kotlin files.
+# Install via: ./gradlew setup
+
+set -e
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
+echo "Running ktlintCheck..."
+./gradlew ktlintCheck --daemon --quiet
+if [ $? -ne 0 ]; then
+    echo "ktlint check failed. Run './gradlew ktlintFormat' to auto-fix, then re-stage."
+    exit 1
+fi
+
+echo "Running detekt..."
+./gradlew detekt --daemon --quiet
+if [ $? -ne 0 ]; then
+    echo "detekt check failed. Review the report and fix issues before committing."
+    exit 1
+fi
+
+echo "All checks passed."

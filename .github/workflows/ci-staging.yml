@@ -1,0 +1,73 @@
+name: CI — Staging
+
+# PAUSED — re-enable by restoring the trigger below when ready for staging builds
+# on:
+#   push:
+#     branches:
+#       - develop
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: staging-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  staging:
+    name: Build and Upload Staging APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
+
+      - name: Write secrets.properties
+        run: |
+          cat > secrets.properties << EOF
+          KEYSTORE_PATH=keystore.jks
+          KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
+          KITE_API_KEY=${{ secrets.KITE_API_KEY }}
+          GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          EOF
+
+      - name: Unit tests
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-staging-${{ github.sha }}
+          path: '**/build/reports/tests/'
+          retention-days: 7
+
+      - name: Assemble staging APK
+        run: ./gradlew assembleStaging --no-daemon
+
+      - name: Upload staging APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kitewatch-staging-${{ github.sha }}
+          path: app/build/outputs/apk/staging/*.apk
+          retention-days: 14
+
+      - name: Clean up secrets
+        if: always()
+        run: |
+          rm -f keystore.jks secrets.properties

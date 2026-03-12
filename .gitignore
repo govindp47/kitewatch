@@ -47,3 +47,6 @@ ehthumbs.db
 
 # Editor
 .vscode/
+
+# Detekt reports (generated on each run)
+**/build/reports/detekt/
