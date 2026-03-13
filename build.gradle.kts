@@ -31,12 +31,13 @@ detekt {
     config.setFrom(files("$rootDir/detekt.yml"))
     buildUponDefaultConfig = true
     allRules = false
+    // Exclude build/ and generated/ dirs (KSP adapters, kspCaches) from analysis
     source.setFrom(
-        "app/src",
-        "core",
-        "feature",
-        "infra",
-        "build-logic",
+        fileTree("core") { exclude("**/build/**") },
+        fileTree("feature") { exclude("**/build/**") },
+        fileTree("infra") { exclude("**/build/**") },
+        fileTree("app/src"),
+        fileTree("build-logic"),
     )
 }
 

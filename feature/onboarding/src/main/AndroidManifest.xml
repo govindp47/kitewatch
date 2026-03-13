@@ -1,2 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!--
+            Handles the kitewatch://callback deep-link redirect from Kite Connect OAuth.
+            Theme.NoDisplay makes the activity invisible — it finishes immediately after
+            handing off the request_token to BindAccountUseCase.
+        -->
+        <activity
+            android:name=".DeepLinkHandlerActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="callback"
+                    android:scheme="kitewatch" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

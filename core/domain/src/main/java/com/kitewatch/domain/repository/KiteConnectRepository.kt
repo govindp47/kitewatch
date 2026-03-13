@@ -1,6 +1,7 @@
 package com.kitewatch.domain.repository
 
 import com.kitewatch.domain.model.Order
+import com.kitewatch.domain.model.SessionCredentials
 
 /**
  * Remote holding as returned by the Kite Connect holdings API.
@@ -28,4 +29,17 @@ interface KiteConnectRepository {
 
     /** Fetches current holdings from Kite for BR-07 pre-sync holdings verification. */
     suspend fun fetchHoldings(): Result<List<RemoteHolding>>
+
+    /**
+     * Exchanges a Kite Connect [requestToken] for a session [SessionCredentials].
+     *
+     * @param apiKey       The registered Kite Connect API key.
+     * @param requestToken One-time token from the OAuth redirect.
+     * @param checksum     SHA-256 hex of "{apiKey}{requestToken}{apiSecret}".
+     */
+    suspend fun generateSession(
+        apiKey: String,
+        requestToken: String,
+        checksum: String,
+    ): Result<SessionCredentials>
 }
