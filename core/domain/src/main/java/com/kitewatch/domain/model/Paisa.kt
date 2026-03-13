@@ -51,6 +51,23 @@ value class Paisa(
     }
 
     /**
+     * Multiply by a rate in milli-basis-points (1 milli-bps = 0.00001%).
+     *
+     * Formula: (value * milliBps + 5_000_000) / 10_000_000
+     * The +5_000_000 implements round-half-up for the division by 10_000_000.
+     *
+     * This provides finer granularity than [applyBasisPoints] for rates that
+     * require sub-basis-point precision (e.g., exchange transaction charges,
+     * stamp duty).
+     *
+     * Example: Paisa(10_000_000) applyMilliBasisPoints 297 (0.00297%) = Paisa(297)
+     */
+    fun applyMilliBasisPoints(milliBps: Int): Paisa {
+        val result = (value * milliBps + 5_000_000) / 10_000_000
+        return Paisa(result)
+    }
+
+    /**
      * Convert to BigDecimal in rupees (divides by 100).
      * Used ONLY at display and reporting boundaries — never in arithmetic.
      */
