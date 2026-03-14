@@ -1,11 +1,17 @@
 package com.kitewatch.app
 
 import android.app.Application
+import androidx.lifecycle.ProcessLifecycleOwner
+import com.kitewatch.infra.auth.AppLockStateManager
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class KiteWatchApplication : Application() {
+    @Inject
+    lateinit var appLockStateManager: AppLockStateManager
+
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
@@ -13,6 +19,7 @@ class KiteWatchApplication : Application() {
         } else {
             Timber.plant(ReleaseTree())
         }
+        ProcessLifecycleOwner.get().lifecycle.addObserver(appLockStateManager)
     }
 }
 

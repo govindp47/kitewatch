@@ -25,6 +25,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.biometric)
     implementation(libs.security.crypto)
+    implementation(libs.lifecycle.runtime.ktx)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     androidTestImplementation(libs.junit.android.ext)
