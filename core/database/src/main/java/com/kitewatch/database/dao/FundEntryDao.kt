@@ -33,4 +33,8 @@ interface FundEntryDao {
     /** Sum of confirmed fund amounts in paisa. Null when no confirmed entries exist. */
     @Query("SELECT SUM(amount_paisa) FROM fund_entries WHERE is_confirmed = 1")
     suspend fun getTotalConfirmedFunds(): Long?
+
+    /** Returns all fund entries (confirmed and pending); used for full backup data assembly. */
+    @Query("SELECT * FROM fund_entries ORDER BY entry_date DESC, id DESC")
+    suspend fun getAll(): List<FundEntryEntity>
 }

@@ -25,4 +25,8 @@ interface GmailScanCacheDao {
         """,
     )
     fun observePending(): Flow<List<GmailScanCacheEntity>>
+
+    /** Returns all scan cache rows; used for full backup data assembly. */
+    @Query("SELECT * FROM gmail_scan_cache ORDER BY scanned_at DESC")
+    suspend fun getAll(): List<GmailScanCacheEntity>
 }

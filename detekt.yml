@@ -167,7 +167,7 @@ complexity:
   TooManyFunctions:
     active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
-    thresholdInFiles: 11
+    thresholdInFiles: 30  # Mapper files legitimately have 2 functions per entity type
     thresholdInClasses: 16
     thresholdInInterfaces: 11
     thresholdInObjects: 11

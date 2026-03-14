@@ -44,4 +44,8 @@ interface GttRecordDao {
         """,
     )
     suspend fun getActiveByStockCode(stockCode: String): GttRecordEntity?
+
+    /** Returns all GTT records including archived; used for full backup data assembly. */
+    @Query("SELECT * FROM gtt_records ORDER BY stock_code ASC, id ASC")
+    suspend fun getAll(): List<GttRecordEntity>
 }

@@ -35,4 +35,8 @@ interface AlertDao {
         id: Long,
         resolvedAt: Long,
     )
+
+    /** Returns all alert rows; used for full backup data assembly. */
+    @Query("SELECT * FROM persistent_alerts ORDER BY created_at DESC")
+    suspend fun getAll(): List<PersistentAlertEntity>
 }
