@@ -1,6 +1,8 @@
 package com.kitewatch.domain.repository
 
 import com.kitewatch.domain.model.Order
+import com.kitewatch.domain.model.Paisa
+import com.kitewatch.domain.model.SessionCredentials
 
 /**
  * Remote holding as returned by the Kite Connect holdings API.
@@ -28,4 +30,49 @@ interface KiteConnectRepository {
 
     /** Fetches current holdings from Kite for BR-07 pre-sync holdings verification. */
     suspend fun fetchHoldings(): Result<List<RemoteHolding>>
+
+    /**
+     * Exchanges a Kite Connect [requestToken] for a session [SessionCredentials].
+     *
+     * @param apiKey       The registered Kite Connect API key.
+     * @param requestToken One-time token from the OAuth redirect.
+     * @param checksum     SHA-256 hex of "{apiKey}{requestToken}{apiSecret}".
+     */
+    suspend fun generateSession(
+        apiKey: String,
+        requestToken: String,
+        checksum: String,
+    ): Result<SessionCredentials>
+
+    // ── GTT Operations ────────────────────────────────────────────────────────
+
+    /**
+     * Creates a single-leg GTT order on Kite Connect.
+     *
+     * @return The Zerodha-assigned GTT trigger ID (string representation) on success,
+     *         or a failure wrapping [com.kitewatch.domain.error.AppError.NetworkError.HttpError].
+     */
+    suspend fun createGtt(
+        stockCode: String,
+        quantity: Int,
+        triggerPrice: Paisa,
+    ): Result<String>
+
+    /**
+     * Modifies an existing GTT on Kite Connect.
+     *
+     * Failure with HTTP 404 means the GTT was cancelled or triggered externally.
+     */
+    suspend fun updateGtt(
+        zerodhaGttId: String,
+        quantity: Int,
+        triggerPrice: Paisa,
+    ): Result<Unit>
+
+    /**
+     * Deletes a GTT from Kite Connect.
+     *
+     * A 404 response is treated as success (GTT already absent on remote).
+     */
+    suspend fun deleteGtt(zerodhaGttId: String): Result<Unit>
 }
