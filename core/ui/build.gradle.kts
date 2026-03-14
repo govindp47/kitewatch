@@ -23,4 +23,6 @@ dependencies {
     debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(libs.junit.android.ext)
     androidTestImplementation(libs.androidx.test.runner)
+
+    testImplementation(libs.junit)
 }
