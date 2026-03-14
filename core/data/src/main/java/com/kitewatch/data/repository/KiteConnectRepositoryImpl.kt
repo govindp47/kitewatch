@@ -1,11 +1,16 @@
 package com.kitewatch.data.repository
 
 import com.kitewatch.data.mapper.toDomain
+import com.kitewatch.domain.error.AppError
 import com.kitewatch.domain.model.Order
+import com.kitewatch.domain.model.Paisa
 import com.kitewatch.domain.model.SessionCredentials
 import com.kitewatch.domain.repository.KiteConnectRepository
 import com.kitewatch.domain.repository.RemoteHolding
+import com.kitewatch.domain.usecase.AppException
 import com.kitewatch.network.kiteconnect.KiteConnectApiService
+import com.kitewatch.network.kiteconnect.dto.GttCreateRequestDto
+import com.kitewatch.network.kiteconnect.dto.GttOrderRequestDto
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -74,4 +79,122 @@ class KiteConnectRepositoryImpl
                     userName = userName,
                 )
             }
+
+        // ── GTT Operations ────────────────────────────────────────────────────────
+
+        override suspend fun createGtt(
+            stockCode: String,
+            quantity: Int,
+            triggerPrice: Paisa,
+        ): Result<String> =
+            runCatching {
+                val triggerPriceRupees = triggerPrice.value / 100.0
+                val request =
+                    GttCreateRequestDto(
+                        type = GTT_TYPE_SINGLE,
+                        tradingSymbol = stockCode,
+                        exchange = EXCHANGE_NSE,
+                        triggerValues = listOf(triggerPriceRupees),
+                        lastPrice = triggerPriceRupees,
+                        orders =
+                            listOf(
+                                GttOrderRequestDto(
+                                    transactionType = TRANSACTION_SELL,
+                                    quantity = quantity,
+                                    product = PRODUCT_CNC,
+                                    orderType = ORDER_TYPE_LIMIT,
+                                    price = triggerPriceRupees,
+                                ),
+                            ),
+                    )
+                val response = apiService.createGttOrder(request)
+                if (response.code() == HTTP_NOT_FOUND) {
+                    return Result.failure(
+                        AppException(AppError.NetworkError.HttpError(HTTP_NOT_FOUND, "Not found")),
+                    )
+                }
+                val body =
+                    response.body()
+                        ?: return Result.failure(Exception("Empty response: ${response.code()}"))
+                if (body.status != "success") {
+                    return Result.failure(
+                        AppException(AppError.NetworkError.HttpError(response.code(), body.message ?: "API error")),
+                    )
+                }
+                val triggerId =
+                    body.data?.triggerId
+                        ?: return Result.failure(Exception("Missing trigger_id in createGtt response"))
+                triggerId.toString()
+            }
+
+        override suspend fun updateGtt(
+            zerodhaGttId: String,
+            quantity: Int,
+            triggerPrice: Paisa,
+        ): Result<Unit> =
+            runCatching {
+                val gttId =
+                    zerodhaGttId.toIntOrNull()
+                        ?: return Result.failure(Exception("Invalid GTT id: $zerodhaGttId"))
+                val triggerPriceRupees = triggerPrice.value / 100.0
+                val request =
+                    GttCreateRequestDto(
+                        type = GTT_TYPE_SINGLE,
+                        tradingSymbol = "",
+                        exchange = EXCHANGE_NSE,
+                        triggerValues = listOf(triggerPriceRupees),
+                        lastPrice = triggerPriceRupees,
+                        orders =
+                            listOf(
+                                GttOrderRequestDto(
+                                    transactionType = TRANSACTION_SELL,
+                                    quantity = quantity,
+                                    product = PRODUCT_CNC,
+                                    orderType = ORDER_TYPE_LIMIT,
+                                    price = triggerPriceRupees,
+                                ),
+                            ),
+                    )
+                val response = apiService.updateGttOrder(gttId, request)
+                if (response.code() == HTTP_NOT_FOUND) {
+                    return Result.failure(
+                        AppException(AppError.NetworkError.HttpError(HTTP_NOT_FOUND, "Not found")),
+                    )
+                }
+                val body =
+                    response.body()
+                        ?: return Result.failure(Exception("Empty response: ${response.code()}"))
+                if (body.status != "success") {
+                    return Result.failure(
+                        AppException(AppError.NetworkError.HttpError(response.code(), body.message ?: "API error")),
+                    )
+                }
+            }
+
+        override suspend fun deleteGtt(zerodhaGttId: String): Result<Unit> =
+            runCatching {
+                val gttId =
+                    zerodhaGttId.toIntOrNull()
+                        ?: return Result.failure(Exception("Invalid GTT id: $zerodhaGttId"))
+                val response = apiService.deleteGttOrder(gttId)
+                // 404 = GTT already absent remotely; treat as success per domain contract.
+                if (response.code() == HTTP_NOT_FOUND) return Result.success(Unit)
+                val body =
+                    response.body()
+                        ?: return Result.failure(Exception("Empty response: ${response.code()}"))
+                if (body.status != "success") {
+                    return Result.failure(
+                        AppException(AppError.NetworkError.HttpError(response.code(), body.message ?: "API error")),
+                    )
+                }
+            }
+
+        private companion object {
+            const val GTT_TYPE_SINGLE = "single"
+            const val EXCHANGE_NSE = "NSE"
+            const val TRANSACTION_SELL = "SELL"
+            const val PRODUCT_CNC = "CNC"
+            const val ORDER_TYPE_LIMIT = "LIMIT"
+            const val HTTP_NOT_FOUND = 404
+        }
     }

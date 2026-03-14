@@ -1,6 +1,7 @@
 package com.kitewatch.domain.repository
 
 import com.kitewatch.domain.model.Order
+import com.kitewatch.domain.model.Paisa
 import com.kitewatch.domain.model.SessionCredentials
 
 /**
@@ -42,4 +43,36 @@ interface KiteConnectRepository {
         requestToken: String,
         checksum: String,
     ): Result<SessionCredentials>
+
+    // ── GTT Operations ────────────────────────────────────────────────────────
+
+    /**
+     * Creates a single-leg GTT order on Kite Connect.
+     *
+     * @return The Zerodha-assigned GTT trigger ID (string representation) on success,
+     *         or a failure wrapping [com.kitewatch.domain.error.AppError.NetworkError.HttpError].
+     */
+    suspend fun createGtt(
+        stockCode: String,
+        quantity: Int,
+        triggerPrice: Paisa,
+    ): Result<String>
+
+    /**
+     * Modifies an existing GTT on Kite Connect.
+     *
+     * Failure with HTTP 404 means the GTT was cancelled or triggered externally.
+     */
+    suspend fun updateGtt(
+        zerodhaGttId: String,
+        quantity: Int,
+        triggerPrice: Paisa,
+    ): Result<Unit>
+
+    /**
+     * Deletes a GTT from Kite Connect.
+     *
+     * A 404 response is treated as success (GTT already absent on remote).
+     */
+    suspend fun deleteGtt(zerodhaGttId: String): Result<Unit>
 }
