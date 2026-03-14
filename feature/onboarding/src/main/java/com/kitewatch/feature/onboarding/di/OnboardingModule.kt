@@ -4,16 +4,18 @@ import com.kitewatch.domain.repository.AccountBindingRepository
 import com.kitewatch.domain.repository.KiteConnectRepository
 import com.kitewatch.domain.repository.TokenStore
 import com.kitewatch.domain.usecase.auth.BindAccountUseCase
+import com.kitewatch.feature.onboarding.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityComponent::class)
+@InstallIn(SingletonComponent::class)
 object OnboardingModule {
-    @ActivityScoped
+    @Singleton
     @Provides
     fun provideBindAccountUseCase(
         kiteConnectRepository: KiteConnectRepository,
@@ -25,4 +27,8 @@ object OnboardingModule {
             accountBindingRepository = accountBindingRepository,
             tokenStore = tokenStore,
         )
+
+    @Provides
+    @Named("kite_api_secret")
+    fun provideApiSecret(): String = BuildConfig.KITE_API_SECRET
 }

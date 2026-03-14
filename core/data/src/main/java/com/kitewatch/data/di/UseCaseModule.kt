@@ -9,6 +9,7 @@ import com.kitewatch.domain.repository.KiteConnectRepository
 import com.kitewatch.domain.repository.OrderRepository
 import com.kitewatch.domain.repository.TransactionRepository
 import com.kitewatch.domain.usecase.SyncOrdersUseCase
+import com.kitewatch.domain.usecase.fund.AddFundEntryUseCase
 import com.kitewatch.domain.usecase.fund.GetFundBalanceUseCase
 import com.kitewatch.domain.usecase.holdings.GetHoldingsUseCase
 import com.kitewatch.domain.usecase.holdings.UpdateProfitTargetUseCase
@@ -28,6 +29,10 @@ object UseCaseModule {
         orderRepo: OrderRepository,
         chargeRateRepo: ChargeRateRepository,
     ): CalculatePnlUseCase = CalculatePnlUseCase(orderRepo, chargeRateRepo)
+
+    @Provides
+    @Singleton
+    fun provideAddFundEntryUseCase(fundRepo: FundRepository): AddFundEntryUseCase = AddFundEntryUseCase(fundRepo)
 
     @Provides
     @Singleton

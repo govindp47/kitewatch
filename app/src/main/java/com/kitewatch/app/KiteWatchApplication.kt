@@ -30,6 +30,9 @@ class KiteWatchApplication :
     @Inject
     lateinit var accountBindingRepository: AccountBindingRepository
 
+    @Inject
+    lateinit var sessionManager: com.kitewatch.infra.auth.SessionManager
+
     /** Application-scoped coroutine scope for fire-and-forget suspend calls in onCreate. */
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
@@ -48,6 +51,7 @@ class KiteWatchApplication :
             Timber.plant(ReleaseTree())
         }
         ProcessLifecycleOwner.get().lifecycle.addObserver(appLockStateManager)
+        applicationScope.launch { sessionManager.observe() }
         scheduleWorkersIfBound()
     }
 
