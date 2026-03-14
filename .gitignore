@@ -27,6 +27,7 @@ google-services.json
 /render.experimental.xml
 
 # Kotlin / Java
+.kotlin/
 *.class
 bin/
 gen/
