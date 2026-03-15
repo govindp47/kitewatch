@@ -1,5 +1,12 @@
 package com.kitewatch.feature.settings.di
 
+import com.kitewatch.domain.repository.FundRepository
+import com.kitewatch.domain.usecase.gmail.ConfirmGmailEntryUseCase
+import com.kitewatch.domain.usecase.gmail.GmailCacheEntry
+import com.kitewatch.domain.usecase.gmail.GmailCachePort
+import com.kitewatch.domain.usecase.gmail.GmailFundDetection
+import com.kitewatch.domain.usecase.gmail.GmailScanPort
+import com.kitewatch.domain.usecase.gmail.ScanGmailUseCase
 import com.kitewatch.domain.usecase.orders.CsvParsePort
 import com.kitewatch.domain.usecase.orders.CsvParsePortResult
 import com.kitewatch.domain.usecase.orders.ImportTransactionPort
@@ -10,6 +17,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -40,4 +49,38 @@ object SettingsModule {
                 chargesByZerodhaId: Map<String, com.kitewatch.domain.model.ChargeBreakdown>,
             ) = Unit
         }
+
+    @Provides
+    fun provideGmailScanPort(): GmailScanPort = GmailScanPort { _, _ -> emptyList() }
+
+    @Provides
+    fun provideGmailCachePort(): GmailCachePort =
+        object : GmailCachePort {
+            override fun observePending(): Flow<List<GmailCacheEntry>> = flowOf(emptyList())
+
+            override suspend fun getAllMessageIds(): Set<String> = emptySet()
+
+            override suspend fun insertPending(detection: GmailFundDetection): Long = -1L
+
+            override suspend fun getByMessageId(messageId: String): GmailCacheEntry? = null
+
+            override suspend fun markConfirmed(
+                messageId: String,
+                linkedFundEntryId: Long,
+            ) = Unit
+
+            override suspend fun markDismissed(messageId: String) = Unit
+        }
+
+    @Provides
+    fun provideScanGmailUseCase(
+        gmailScanPort: GmailScanPort,
+        gmailCachePort: GmailCachePort,
+    ): ScanGmailUseCase = ScanGmailUseCase(gmailScanPort, gmailCachePort)
+
+    @Provides
+    fun provideConfirmGmailEntryUseCase(
+        fundRepository: FundRepository,
+        gmailCachePort: GmailCachePort,
+    ): ConfirmGmailEntryUseCase = ConfirmGmailEntryUseCase(fundRepository, gmailCachePort)
 }

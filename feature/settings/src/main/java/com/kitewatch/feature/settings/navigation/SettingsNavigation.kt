@@ -4,11 +4,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kitewatch.feature.settings.BackupRestoreRoute
 import com.kitewatch.feature.settings.CsvImportRoute
+import com.kitewatch.feature.settings.GmailDetectionsRoute
 import com.kitewatch.feature.settings.SettingsRoute
 
 const val SETTINGS_ROUTE = "settings"
 const val BACKUP_RESTORE_ROUTE = "settings/backup_restore"
 const val CSV_IMPORT_ROUTE = "settings/csv_import"
+const val GMAIL_DETECTIONS_ROUTE = "settings/gmail_detections"
 
 // private const val ABOUT_ROUTE = "settings/about"
 // private const val GUIDEBOOK_ROUTE = "settings/guidebook"
@@ -20,6 +22,7 @@ fun NavGraphBuilder.settingsScreen(
     onNavigateToPrivacy: () -> Unit = {},
     onNavigateToBackupRestore: () -> Unit = {},
     onNavigateToCsvImport: () -> Unit = {},
+    onNavigateToGmailDetections: () -> Unit = {},
 ) {
     composable(route = SETTINGS_ROUTE) {
         SettingsRoute(
@@ -28,6 +31,7 @@ fun NavGraphBuilder.settingsScreen(
             onNavigateToPrivacy = onNavigateToPrivacy,
             onNavigateToBackupRestore = onNavigateToBackupRestore,
             onNavigateToCsvImport = onNavigateToCsvImport,
+            onNavigateToGmailDetections = onNavigateToGmailDetections,
         )
     }
 }
@@ -41,5 +45,11 @@ fun NavGraphBuilder.backupRestoreScreen(onNavigateUp: () -> Unit) {
 fun NavGraphBuilder.csvImportScreen(onNavigateUp: () -> Unit) {
     composable(route = CSV_IMPORT_ROUTE) {
         CsvImportRoute(onNavigateUp = onNavigateUp)
+    }
+}
+
+fun NavGraphBuilder.gmailDetectionsScreen(onNavigateUp: () -> Unit) {
+    composable(route = GMAIL_DETECTIONS_ROUTE) {
+        GmailDetectionsRoute(onNavigateUp = onNavigateUp)
     }
 }

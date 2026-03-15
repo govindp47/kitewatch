@@ -33,6 +33,7 @@ fun SettingsRoute(
     onNavigateToPrivacy: () -> Unit = {},
     onNavigateToBackupRestore: () -> Unit = {},
     onNavigateToCsvImport: () -> Unit = {},
+    onNavigateToGmailDetections: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -57,6 +58,7 @@ fun SettingsRoute(
                 onNavigateToPrivacy = onNavigateToPrivacy,
                 onNavigateToBackupRestore = onNavigateToBackupRestore,
                 onNavigateToCsvImport = onNavigateToCsvImport,
+                onNavigateToGmailDetections = onNavigateToGmailDetections,
             ),
         modifier = modifier,
     )
@@ -144,6 +146,13 @@ internal fun SettingsScreen(
                     label = "Import CSV",
                     subtitle = "Import orders from a Kite Trade Book or Orders CSV",
                     onClick = navigation.onNavigateToCsvImport,
+                )
+            }
+            item {
+                SettingsRow(
+                    label = "Gmail Fund Detections",
+                    subtitle = "Review fund credits detected from Zerodha emails",
+                    onClick = navigation.onNavigateToGmailDetections,
                 )
             }
             item { HorizontalDivider() }

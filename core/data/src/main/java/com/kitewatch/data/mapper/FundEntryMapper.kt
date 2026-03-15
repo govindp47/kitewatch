@@ -32,6 +32,7 @@ private fun entityEntryTypeToDomain(type: String): FundEntryType =
         "ADDITION" -> FundEntryType.DEPOSIT
         "WITHDRAWAL" -> FundEntryType.WITHDRAWAL
         "DIVIDEND" -> FundEntryType.DIVIDEND
+        "GMAIL_DETECTED" -> FundEntryType.GMAIL_DETECTED
         else -> FundEntryType.MISC_ADJUSTMENT
     }
 
@@ -40,5 +41,6 @@ private fun domainEntryTypeToEntity(type: FundEntryType): String =
         FundEntryType.DEPOSIT -> "ADDITION"
         FundEntryType.WITHDRAWAL -> "WITHDRAWAL"
         FundEntryType.DIVIDEND -> "DIVIDEND"
+        FundEntryType.GMAIL_DETECTED -> "GMAIL_DETECTED"
         FundEntryType.MISC_ADJUSTMENT -> "MISC_ADJUSTMENT"
     }

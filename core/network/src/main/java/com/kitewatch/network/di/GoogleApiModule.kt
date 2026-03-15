@@ -1,6 +1,7 @@
 package com.kitewatch.network.di
 
 import com.kitewatch.network.drive.GoogleDriveApiClient
+import com.kitewatch.network.gmail.GmailApiClient
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -60,4 +61,10 @@ object GoogleApiModule {
     fun provideGoogleDriveApiClient(
         @Named("google") retrofit: Retrofit,
     ): GoogleDriveApiClient = retrofit.create(GoogleDriveApiClient::class.java)
+
+    @Singleton
+    @Provides
+    fun provideGmailApiClient(
+        @Named("google") retrofit: Retrofit,
+    ): GmailApiClient = retrofit.create(GmailApiClient::class.java)
 }
