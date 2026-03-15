@@ -21,4 +21,8 @@ interface OrderHoldingDao {
     /** Returns all junction rows; used for full backup data assembly. */
     @Query("SELECT * FROM order_holdings")
     suspend fun getAll(): List<OrderHoldingEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM order_holdings")
+    suspend fun deleteAll()
 }

@@ -2,9 +2,11 @@ package com.kitewatch.feature.settings.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.kitewatch.feature.settings.BackupRestoreRoute
 import com.kitewatch.feature.settings.SettingsRoute
 
 const val SETTINGS_ROUTE = "settings"
+const val BACKUP_RESTORE_ROUTE = "settings/backup_restore"
 
 // private const val ABOUT_ROUTE = "settings/about"
 // private const val GUIDEBOOK_ROUTE = "settings/guidebook"
@@ -14,12 +16,20 @@ fun NavGraphBuilder.settingsScreen(
     onNavigateToAbout: () -> Unit = {},
     onNavigateToGuidebook: () -> Unit = {},
     onNavigateToPrivacy: () -> Unit = {},
+    onNavigateToBackupRestore: () -> Unit = {},
 ) {
     composable(route = SETTINGS_ROUTE) {
         SettingsRoute(
             onNavigateToAbout = onNavigateToAbout,
             onNavigateToGuidebook = onNavigateToGuidebook,
             onNavigateToPrivacy = onNavigateToPrivacy,
+            onNavigateToBackupRestore = onNavigateToBackupRestore,
         )
+    }
+}
+
+fun NavGraphBuilder.backupRestoreScreen(onNavigateUp: () -> Unit) {
+    composable(route = BACKUP_RESTORE_ROUTE) {
+        BackupRestoreRoute(onNavigateUp = onNavigateUp)
     }
 }

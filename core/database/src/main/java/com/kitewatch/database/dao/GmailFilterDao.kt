@@ -23,4 +23,8 @@ interface GmailFilterDao {
     /** Returns all filter rows (active and inactive); used for full backup data assembly. */
     @Query("SELECT * FROM gmail_filters ORDER BY created_at ASC")
     suspend fun getAll(): List<GmailFilterEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM gmail_filters")
+    suspend fun deleteAll()
 }

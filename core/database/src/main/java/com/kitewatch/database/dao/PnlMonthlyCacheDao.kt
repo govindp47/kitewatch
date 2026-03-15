@@ -24,4 +24,8 @@ interface PnlMonthlyCacheDao {
     /** Returns all monthly cache rows; used for full backup data assembly. */
     @Query("SELECT * FROM pnl_monthly_cache ORDER BY year_month DESC")
     suspend fun getAll(): List<PnlMonthlyCacheEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM pnl_monthly_cache")
+    suspend fun deleteAll()
 }

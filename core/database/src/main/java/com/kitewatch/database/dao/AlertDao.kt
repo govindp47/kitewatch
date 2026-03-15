@@ -39,4 +39,8 @@ interface AlertDao {
     /** Returns all alert rows; used for full backup data assembly. */
     @Query("SELECT * FROM persistent_alerts ORDER BY created_at DESC")
     suspend fun getAll(): List<PersistentAlertEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM persistent_alerts")
+    suspend fun deleteAll()
 }

@@ -48,4 +48,8 @@ interface GttRecordDao {
     /** Returns all GTT records including archived; used for full backup data assembly. */
     @Query("SELECT * FROM gtt_records ORDER BY stock_code ASC, id ASC")
     suspend fun getAll(): List<GttRecordEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM gtt_records")
+    suspend fun deleteAll()
 }

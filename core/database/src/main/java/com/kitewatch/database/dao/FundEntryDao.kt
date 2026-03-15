@@ -37,4 +37,8 @@ interface FundEntryDao {
     /** Returns all fund entries (confirmed and pending); used for full backup data assembly. */
     @Query("SELECT * FROM fund_entries ORDER BY entry_date DESC, id DESC")
     suspend fun getAll(): List<FundEntryEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM fund_entries")
+    suspend fun deleteAll()
 }

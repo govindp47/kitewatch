@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
     implementation(project(":core:ui"))
+    implementation(project(":infra:backup"))
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.datastore.preferences)

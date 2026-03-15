@@ -29,4 +29,8 @@ interface GmailScanCacheDao {
     /** Returns all scan cache rows; used for full backup data assembly. */
     @Query("SELECT * FROM gmail_scan_cache ORDER BY scanned_at DESC")
     suspend fun getAll(): List<GmailScanCacheEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM gmail_scan_cache")
+    suspend fun deleteAll()
 }

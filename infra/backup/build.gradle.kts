@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.coroutines.android)
+    implementation(libs.room.ktx)
     implementation(libs.protobuf.kotlin.lite)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
