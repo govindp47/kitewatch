@@ -16,6 +16,7 @@ import com.kitewatch.database.dao.PnlMonthlyCacheDao
 import com.kitewatch.database.dao.SyncEventDao
 import com.kitewatch.database.dao.TransactionDao
 import com.kitewatch.database.dao.WorkerHandoffDao
+import com.kitewatch.infra.auth.MasterKeyProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,11 +28,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+    // --- START MODIFICATION ---
     @Singleton
     @Provides
     fun provideDatabase(
         @ApplicationContext context: Context,
-    ): AppDatabase = AppDatabase.buildDatabase(context)
+        masterKeyProvider: MasterKeyProvider,
+    ): AppDatabase = AppDatabase.buildDatabase(context, masterKeyProvider.databasePassphrase)
+    // --- END MODIFICATION ---
 
     @Provides
     fun provideOrderDao(db: AppDatabase): OrderDao = db.orderDao()

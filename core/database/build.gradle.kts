@@ -22,6 +22,9 @@ ksp {
 
 dependencies {
     implementation(project(":core:domain"))
+    // --- START MODIFICATION ---
+    implementation(project(":infra:auth"))
+    // --- END MODIFICATION ---
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.room.runtime)
@@ -29,6 +32,9 @@ dependencies {
     implementation(libs.room.paging)
     ksp(libs.room.compiler)
     implementation(libs.paging.runtime)
+    // --- START MODIFICATION ---
+    implementation(libs.sqlcipher)
+    // --- END MODIFICATION ---
     testImplementation(libs.junit)
     testImplementation(libs.room.testing)
     testImplementation(libs.robolectric)

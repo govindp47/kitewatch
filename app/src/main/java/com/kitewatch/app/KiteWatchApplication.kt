@@ -3,6 +3,7 @@ package com.kitewatch.app
 import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
+import com.kitewatch.app.logging.SanitisedDebugTree
 import com.kitewatch.domain.repository.AccountBindingRepository
 import com.kitewatch.infra.auth.AppLockStateManager
 import com.kitewatch.infra.worker.WorkSchedulerRepository
@@ -45,11 +46,14 @@ class KiteWatchApplication :
 
     override fun onCreate() {
         super.onCreate()
+        // --- START MODIFICATION ---
         if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
+            // SanitisedDebugTree scrubs sensitive key=value patterns before logcat output.
+            Timber.plant(SanitisedDebugTree())
         } else {
             Timber.plant(ReleaseTree())
         }
+        // --- END MODIFICATION ---
         ProcessLifecycleOwner.get().lifecycle.addObserver(appLockStateManager)
         applicationScope.launch { sessionManager.observe() }
         scheduleWorkersIfBound()

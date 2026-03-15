@@ -3,6 +3,7 @@ package com.kitewatch.network.di
 import android.content.SharedPreferences
 import com.kitewatch.domain.event.SessionExpiredEvent
 import com.kitewatch.network.kiteconnect.KiteConnectApiService
+import com.kitewatch.network.kiteconnect.KiteConnectCertificatePinner
 import com.kitewatch.network.kiteconnect.adapter.ApiResultAdapterFactory
 import com.kitewatch.network.kiteconnect.interceptor.KiteConnectAuthInterceptor
 import com.kitewatch.network.kiteconnect.interceptor.KiteConnectRateLimitInterceptor
@@ -64,8 +65,10 @@ object NetworkModule {
         authInterceptor: KiteConnectAuthInterceptor,
         tokenExpiredInterceptor: TokenExpiredInterceptor,
     ): OkHttpClient =
+        // --- START MODIFICATION ---
         OkHttpClient
             .Builder()
+            .certificatePinner(KiteConnectCertificatePinner.build())
             .connectTimeout(CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .retryOnConnectionFailure(false)
@@ -73,6 +76,7 @@ object NetworkModule {
             .addInterceptor(authInterceptor)
             .addInterceptor(tokenExpiredInterceptor)
             .build()
+    // --- END MODIFICATION ---
 
     @Singleton
     @Provides

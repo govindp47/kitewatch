@@ -17,6 +17,12 @@ sealed class AppError {
 
         data object RateLimited : NetworkError()
 
+        // --- START MODIFICATION ---
+
+        /** Certificate pin mismatch — the server's public key did not match any pinned hash. */
+        data object CertificateMismatch : NetworkError()
+        // --- END MODIFICATION ---
+
         data class Unexpected(
             val cause: Throwable?,
         ) : NetworkError()
