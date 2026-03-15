@@ -17,4 +17,12 @@ interface OrderHoldingDao {
     /** Returns all order IDs associated with a given holding. */
     @Query("SELECT order_id FROM order_holdings WHERE holding_id = :holdingId")
     suspend fun getOrderIdsByHoldingId(holdingId: Long): List<Long>
+
+    /** Returns all junction rows; used for full backup data assembly. */
+    @Query("SELECT * FROM order_holdings")
+    suspend fun getAll(): List<OrderHoldingEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM order_holdings")
+    suspend fun deleteAll()
 }

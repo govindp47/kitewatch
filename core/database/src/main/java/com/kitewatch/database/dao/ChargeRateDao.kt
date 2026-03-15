@@ -26,4 +26,12 @@ interface ChargeRateDao {
     /** Prune historical rows older than the given epoch-millis cutoff. */
     @Query("DELETE FROM charge_rates WHERE fetched_at < :cutoffEpochMillis")
     suspend fun pruneOlderThan(cutoffEpochMillis: Long)
+
+    /** Returns all charge rate rows (current and historical); used for full backup data assembly. */
+    @Query("SELECT * FROM charge_rates ORDER BY effective_from DESC")
+    suspend fun getAll(): List<ChargeRateEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM charge_rates")
+    suspend fun deleteAll()
 }

@@ -4,4 +4,7 @@ data class SettingsNavigationActions(
     val onNavigateToAbout: () -> Unit = {},
     val onNavigateToGuidebook: () -> Unit = {},
     val onNavigateToPrivacy: () -> Unit = {},
+    val onNavigateToBackupRestore: () -> Unit = {},
+    val onNavigateToCsvImport: () -> Unit = {},
+    val onNavigateToGmailDetections: () -> Unit = {},
 )

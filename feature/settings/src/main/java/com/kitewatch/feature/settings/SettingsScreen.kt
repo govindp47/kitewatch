@@ -23,6 +23,7 @@ import com.kitewatch.feature.settings.component.FundBalanceEntrySheet
 import com.kitewatch.feature.settings.component.SettingsRow
 import com.kitewatch.feature.settings.component.SettingsSectionHeader
 
+@Suppress("LongParameterList")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsRoute(
@@ -30,6 +31,9 @@ fun SettingsRoute(
     onNavigateToAbout: () -> Unit = {},
     onNavigateToGuidebook: () -> Unit = {},
     onNavigateToPrivacy: () -> Unit = {},
+    onNavigateToBackupRestore: () -> Unit = {},
+    onNavigateToCsvImport: () -> Unit = {},
+    onNavigateToGmailDetections: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -52,6 +56,9 @@ fun SettingsRoute(
                 onNavigateToAbout = onNavigateToAbout,
                 onNavigateToGuidebook = onNavigateToGuidebook,
                 onNavigateToPrivacy = onNavigateToPrivacy,
+                onNavigateToBackupRestore = onNavigateToBackupRestore,
+                onNavigateToCsvImport = onNavigateToCsvImport,
+                onNavigateToGmailDetections = onNavigateToGmailDetections,
             ),
         modifier = modifier,
     )
@@ -121,6 +128,31 @@ internal fun SettingsScreen(
                 SettingsRow(
                     label = "Sync Schedule",
                     subtitle = "Automatic (every 15 min while market is open)",
+                )
+            }
+            item { HorizontalDivider() }
+
+            // ── Backup & Restore ──────────────────────────────────────────────────
+            item { SettingsSectionHeader(title = "Backup & Restore") }
+            item {
+                SettingsRow(
+                    label = "Backup & Restore",
+                    subtitle = "Back up data to Drive or restore from a file",
+                    onClick = navigation.onNavigateToBackupRestore,
+                )
+            }
+            item {
+                SettingsRow(
+                    label = "Import CSV",
+                    subtitle = "Import orders from a Kite Trade Book or Orders CSV",
+                    onClick = navigation.onNavigateToCsvImport,
+                )
+            }
+            item {
+                SettingsRow(
+                    label = "Gmail Fund Detections",
+                    subtitle = "Review fund credits detected from Zerodha emails",
+                    onClick = navigation.onNavigateToGmailDetections,
                 )
             }
             item { HorizontalDivider() }

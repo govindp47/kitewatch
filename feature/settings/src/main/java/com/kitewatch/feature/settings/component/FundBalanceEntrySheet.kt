@@ -128,5 +128,6 @@ private fun FundEntryType.toLabel(): String =
         FundEntryType.DEPOSIT -> "Deposit"
         FundEntryType.WITHDRAWAL -> "Withdrawal"
         FundEntryType.DIVIDEND -> "Dividend"
+        FundEntryType.GMAIL_DETECTED -> "Gmail"
         FundEntryType.MISC_ADJUSTMENT -> "Misc"
     }

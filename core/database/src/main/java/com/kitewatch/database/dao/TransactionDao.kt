@@ -52,4 +52,12 @@ interface TransactionDao {
 
     // NO @Update — transactions are immutable after insertion (INV-10)
     // NO @Delete — transactions are never deleted (INV-10)
+
+    /** Returns all transactions; used for full backup data assembly. */
+    @Query("SELECT * FROM transactions ORDER BY transaction_date DESC, id DESC")
+    suspend fun getAll(): List<TransactionEntity>
+
+    /** Deletes all rows; used during backup restore (INV-10 exception: restore is intentional). */
+    @Query("DELETE FROM transactions")
+    suspend fun deleteAll()
 }

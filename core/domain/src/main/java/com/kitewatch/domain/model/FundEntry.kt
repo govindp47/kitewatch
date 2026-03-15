@@ -15,4 +15,4 @@ data class FundEntry(
     }
 }
 
-enum class FundEntryType { DEPOSIT, WITHDRAWAL, DIVIDEND, MISC_ADJUSTMENT }
+enum class FundEntryType { DEPOSIT, WITHDRAWAL, DIVIDEND, MISC_ADJUSTMENT, GMAIL_DETECTED }

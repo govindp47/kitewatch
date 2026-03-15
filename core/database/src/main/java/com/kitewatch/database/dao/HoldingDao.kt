@@ -40,4 +40,8 @@ interface HoldingDao {
 
     @Query("SELECT * FROM holdings ORDER BY stock_code ASC")
     suspend fun getAll(): List<HoldingEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM holdings")
+    suspend fun deleteAll()
 }

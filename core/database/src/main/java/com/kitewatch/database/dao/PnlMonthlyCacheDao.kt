@@ -20,4 +20,12 @@ interface PnlMonthlyCacheDao {
     /** Prune cache rows older than the given cutoff (exclusive, 'YYYY-MM' format). */
     @Query("DELETE FROM pnl_monthly_cache WHERE year_month < :cutoffYearMonth")
     suspend fun pruneOlderThan(cutoffYearMonth: String)
+
+    /** Returns all monthly cache rows; used for full backup data assembly. */
+    @Query("SELECT * FROM pnl_monthly_cache ORDER BY year_month DESC")
+    suspend fun getAll(): List<PnlMonthlyCacheEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM pnl_monthly_cache")
+    suspend fun deleteAll()
 }

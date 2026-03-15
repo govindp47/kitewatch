@@ -51,4 +51,8 @@ interface OrderDao {
         """,
     )
     suspend fun getBuyOrdersByStockCode(stockCode: String): List<OrderEntity>
+
+    /** Deletes all rows; used during backup restore. */
+    @Query("DELETE FROM orders")
+    suspend fun deleteAll()
 }

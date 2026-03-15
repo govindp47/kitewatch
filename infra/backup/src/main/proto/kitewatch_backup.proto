@@ -1,0 +1,189 @@
+syntax = "proto3";
+
+package com.kitewatch.backup;
+
+option java_package = "com.kitewatch.infra.backup.proto";
+option java_outer_classname = "KiteWatchBackupOuterClass";
+option java_multiple_files = true;
+
+message KiteWatchBackup {
+    BackupHeader header = 1;
+    repeated Order orders = 2;
+    repeated Holding holdings = 3;
+    repeated Transaction transactions = 4;
+    repeated FundEntry fund_entries = 5;
+    repeated ChargeRate charge_rates = 6;
+    repeated GttRecord gtt_records = 7;
+    repeated OrderHoldingsLink order_holdings_links = 8;
+    repeated PnlMonthlyCache pnl_cache = 9;
+    repeated GmailScanCache gmail_cache = 10;
+    repeated GmailFilter gmail_filters = 11;
+    repeated PersistentAlert alerts = 12;
+    UserPreferences preferences = 13;
+}
+
+message BackupHeader {
+    uint32 format_version = 1;
+    uint32 schema_version = 2;
+    string created_at = 3;
+    string account_id = 4;
+    string app_version = 5;
+    uint64 record_count = 6;
+}
+
+message Order {
+    int64 id = 1;
+    string zerodha_order_id = 2;
+    string stock_code = 3;
+    string stock_name = 4;
+    string exchange = 5;
+    string order_type = 6;
+    int32 quantity = 7;
+    int64 price_paisa = 8;
+    int64 total_value_paisa = 9;
+    string trade_date = 10;
+    string trade_timestamp = 11;
+    string settlement_id = 12;
+    int32 instrument_token = 13;
+    string source = 14;
+    string created_at = 15;
+}
+
+message Holding {
+    int64 id = 1;
+    string stock_code = 2;
+    string stock_name = 3;
+    string exchange = 4;
+    int32 quantity = 5;
+    int64 invested_amount_paisa = 6;
+    int64 avg_buy_price_paisa = 7;
+    int64 total_buy_charges_paisa = 8;
+    string profit_target_type = 9;
+    int32 profit_target_value = 10;
+    int64 target_sell_price_paisa = 11;
+    int32 instrument_token = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message Transaction {
+    int64 id = 1;
+    string type = 2;
+    string sub_type = 3;
+    string reference_id = 4;
+    string reference_type = 5;
+    string stock_code = 6;
+    int64 amount_paisa = 7;
+    int64 running_fund_balance_paisa = 8;
+    string description = 9;
+    string transaction_date = 10;
+    string source = 11;
+    string created_at = 12;
+}
+
+message FundEntry {
+    int64 id = 1;
+    string entry_type = 2;
+    int64 amount_paisa = 3;
+    string entry_date = 4;
+    string note = 5;
+    bool is_gmail_detected = 6;
+    string gmail_message_id = 7;
+    string reconciliation_id = 8;
+    string created_at = 9;
+}
+
+message ChargeRate {
+    int64 id = 1;
+    string rate_type = 2;
+    int64 rate_value = 3;
+    string rate_unit = 4;
+    string effective_from = 5;
+    string fetched_at = 6;
+    bool is_current = 7;
+}
+
+message GttRecord {
+    int64 id = 1;
+    int32 zerodha_gtt_id = 2;
+    string stock_code = 3;
+    string trigger_type = 4;
+    int64 trigger_price_paisa = 5;
+    int32 sell_quantity = 6;
+    string gtt_status = 7;
+    bool is_app_managed = 8;
+    int64 app_calculated_price = 9;
+    bool manual_override_detected = 10;
+    int64 holding_id = 11;
+    string last_synced_at = 12;
+    bool is_archived = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message OrderHoldingsLink {
+    int64 id = 1;
+    int64 order_id = 2;
+    int64 holding_id = 3;
+    int32 quantity = 4;
+}
+
+message PnlMonthlyCache {
+    int64 id = 1;
+    string year_month = 2;
+    int64 total_sell_value_paisa = 3;
+    int64 total_buy_cost_sold_paisa = 4;
+    int64 total_buy_charges_paisa = 5;
+    int64 total_sell_charges_paisa = 6;
+    int64 realized_pnl_paisa = 7;
+    int64 invested_value_paisa = 8;
+    int32 order_count = 9;
+    string last_updated_at = 10;
+}
+
+message GmailScanCache {
+    int64 id = 1;
+    string gmail_message_id = 2;
+    string detected_type = 3;
+    int64 detected_amount_paisa = 4;
+    string email_date = 5;
+    string email_subject = 6;
+    string email_sender = 7;
+    string status = 8;
+    int64 linked_fund_entry_id = 9;
+    string scanned_at = 10;
+}
+
+message GmailFilter {
+    int64 id = 1;
+    string filter_type = 2;
+    string filter_value = 3;
+    bool is_active = 4;
+    string created_at = 5;
+}
+
+message PersistentAlert {
+    int64 id = 1;
+    string alert_type = 2;
+    string severity = 3;
+    string payload = 4;
+    bool acknowledged = 5;
+    string created_at = 6;
+    string resolved_at = 7;
+    string resolved_by = 8;
+}
+
+message UserPreferences {
+    string theme_mode = 1;
+    repeated string order_sync_times = 2;
+    string reconciliation_time = 3;
+    int32 charge_rate_refresh_days = 4;
+    int64 reconciliation_tolerance_paisa = 5;
+    bool gmail_enabled = 6;
+    bool scheduled_backup_enabled = 7;
+    int32 backup_interval_days = 8;
+    string backup_destination = 9;
+    int32 lock_timeout_minutes = 10;
+    string default_profit_target_type = 11;
+    int32 default_profit_target_value = 12;
+}
