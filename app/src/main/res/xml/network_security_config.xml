@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Network Security Configuration — belt-and-suspenders companion to OkHttp CertificatePinner.
+
+    Belt (primary):  OkHttp CertificatePinner in KiteConnectCertificatePinner.kt enforces SPKI
+                     pinning for api.kite.trade at the HTTP client layer.
+    Suspenders:      This config enforces cleartext blocking and SPKI pinning at the OS layer,
+                     catching any code path that bypasses the OkHttp client.
+
+    PIN ROTATION: When Zerodha rotates their certificate, update both this file AND
+    KiteConnectCertificatePinner.kt before the old certificate expires.
+    See docs/10_DEPLOYMENT_WORKFLOW.md §11 for the full rotation procedure.
+-->
+<network-security-config>
+
+    <!-- Forbid cleartext (HTTP) traffic to ALL hosts. -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Certificate pinning for the Kite Connect API domain. -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">api.kite.trade</domain>
+        <!--
+            Pins extracted 2026-03-15.
+            Leaf:         CN=*.kite.trade
+            Intermediate: Sectigo RSA Domain Validation Secure Server CA
+        -->
+        <pin-set expiration="2027-03-15">
+            <!-- Leaf: *.kite.trade -->
+            <pin digest="SHA-256">HUdH3qmn8f23Xy4zTVMLvw3pkmjc1i1pUlnLQuIaOUY=</pin>
+            <!-- Backup: Sectigo RSA DV intermediate CA -->
+            <pin digest="SHA-256">4a6cPehI7OG6cuDZka5NDZ7FR8a60d3auda+sKfg4Ng=</pin>
+        </pin-set>
+    </domain-config>
+
+    <!-- Allow user-installed CA certificates in debug builds only (for Proxy/Charles). -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+
+</network-security-config>

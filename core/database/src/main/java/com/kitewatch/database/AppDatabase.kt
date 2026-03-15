@@ -34,6 +34,8 @@ import com.kitewatch.database.entity.PnlMonthlyCacheEntity
 import com.kitewatch.database.entity.SyncEventEntity
 import com.kitewatch.database.entity.TransactionEntity
 import com.kitewatch.database.entity.WorkerHandoffEntity
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 
 /**
  * Room database for KiteWatch.
@@ -102,13 +104,26 @@ abstract class AppDatabase : RoomDatabase() {
         const val DATABASE_NAME = "kitewatch.db"
 
         /**
-         * Build the production database.
+         * Build the SQLCipher-encrypted production database.
+         *
+         * [passphrase] must be the 32-byte value obtained from
+         * [com.kitewatch.infra.auth.MasterKeyProvider.databasePassphrase].
+         * It is protected by the Android Keystore-backed EncryptedSharedPreferences;
+         * callers must not log or persist it beyond this call site.
+         *
          * No fallbackToDestructiveMigration — violations are a blocking defect.
          */
-        fun buildDatabase(context: Context): AppDatabase =
-            Room
+        fun buildDatabase(
+            context: Context,
+            passphrase: ByteArray,
+        ): AppDatabase {
+            SQLiteDatabase.loadLibs(context)
+            val factory = SupportFactory(passphrase)
+            return Room
                 .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+                .openHelperFactory(factory)
                 .addTypeConverter(RoomTypeConverters())
                 .build()
+        }
     }
 }

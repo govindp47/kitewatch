@@ -798,3 +798,68 @@ Three consecutive auth failures force a session expiry + re-auth screen rather t
 | Backup serialize + write | < 5 seconds for 10,000 records | `BackupEngine` benchmark test |
 
 These baselines are checked quarterly and before each major release. Regressions > 20% over baseline trigger a performance investigation before shipping.
+
+---
+
+## 11. Certificate Pin Rotation Procedure
+
+KiteWatch pins Kite Connect API certificates at two layers: OkHttp `CertificatePinner` (code) and `network_security_config.xml` (OS). Both must be updated in lockstep before the pinned certificate expires.
+
+### 11.1 Current Pins
+
+| Layer | Certificate | Subject | Pin (SHA-256 SPKI) | Extracted |
+|---|---|---|---|---|
+| Leaf | server cert | `*.kite.trade` | `HUdH3qmn8f23Xy4zTVMLvw3pkmjc1i1pUlnLQuIaOUY=` | 2026-03-15 |
+| Intermediate | Sectigo RSA DV | `Sectigo RSA Domain Validation Secure Server CA` | `4a6cPehI7OG6cuDZka5NDZ7FR8a60d3auda+sKfg4Ng=` | 2026-03-15 |
+| Root | USERTrust RSA CA | `USERTrust RSA Certification Authority` | `x4QzPSC810K5/cMjb05Qm4k3Bw5zBn4lTdO/nEW/Td4=` | 2026-03-15 |
+
+### 11.2 Detecting Rotation
+
+Zerodha does not publish certificate rotation notices. Monitor proactively:
+
+1. Set a calendar reminder 60 days before the `<pin-set expiration>` date in `network_security_config.xml`.
+2. Subscribe to certificate transparency (CT) logs for `kite.trade` via [crt.sh](https://crt.sh/?q=kite.trade) to detect new certificate issuances.
+
+### 11.3 Extracting New Pins
+
+When Zerodha issues a new certificate, extract the new SPKI SHA-256 hash:
+
+```bash
+# Extract all certs in the chain and print SPKI pins
+echo | openssl s_client -connect api.kite.trade:443 -showcerts 2>/dev/null \
+  | awk 'BEGIN{n=0} /-----BEGIN CERTIFICATE-----/{n++; f="cert"n".pem"} {print >> f}' \
+  && for i in cert*.pem; do
+       echo "=== $i ==="
+       openssl x509 -in $i -subject -issuer -noout
+       openssl x509 -in $i -pubkey -noout \
+         | openssl pkey -pubin -outform DER \
+         | openssl dgst -sha256 -binary | base64
+     done
+```
+
+### 11.4 Updating the App
+
+**Update both files atomically in the same commit:**
+
+1. **`core/network/src/main/java/.../kiteconnect/KiteConnectCertificatePinner.kt`**
+   - Add the new leaf pin as `PIN_LEAF_NEW`.
+   - Keep the old leaf pin as `PIN_LEAF_OLD` until the old certificate expires.
+   - Update the `add()` call to include all active pins.
+
+2. **`app/src/main/res/xml/network_security_config.xml`**
+   - Add the new `<pin>` entry inside the existing `<pin-set>`.
+   - Update the `expiration` date to reflect the new certificate's validity period.
+   - Keep the old `<pin>` entry until the old certificate expires.
+
+3. Ship the updated APK as a new release. Distribute to all users **before the old certificate expires**. Users on the old app version will receive `CertificateMismatch` errors after the old certificate expires and Zerodha switches to the new one.
+
+4. Once all users are on the new version and the old certificate has expired, remove the old `PIN_LEAF_OLD` constant and the corresponding `<pin>` entry in the XML in the next release.
+
+### 11.5 Emergency Rollback
+
+If a pin mismatch causes a production outage (all API calls fail with `CertificateMismatch`):
+
+1. Set `KiteConnectCertificatePinner.build()` to return `CertificatePinner.Builder().build()` (empty pinner — disables pinning).
+2. Set `<pin-set>` to an empty element in `network_security_config.xml`.
+3. Ship as a hotfix release immediately.
+4. Root-cause the certificate change, extract new pins, and re-enable pinning in the following release.

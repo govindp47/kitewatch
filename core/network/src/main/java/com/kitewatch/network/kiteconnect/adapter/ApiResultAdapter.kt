@@ -13,6 +13,7 @@ import java.io.IOException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.net.SocketTimeoutException
+import javax.net.ssl.SSLPeerUnverifiedException
 
 /**
  * Retrofit [CallAdapter.Factory] that converts [Call]<T> to [Result]<T>.
@@ -52,6 +53,11 @@ internal class ApiResultAdapter<T>(
             mapResponse(response)
         } catch (e: SocketTimeoutException) {
             Result.failure(AppException(AppError.NetworkError.Timeout, e))
+            // --- START MODIFICATION ---
+        } catch (e: SSLPeerUnverifiedException) {
+            // Certificate pin mismatch — OkHttp's CertificatePinner rejected the server cert.
+            Result.failure(AppException(AppError.NetworkError.CertificateMismatch, e))
+            // --- END MODIFICATION ---
         } catch (e: IOException) {
             Result.failure(AppException(AppError.NetworkError.NoConnection, e))
         }
@@ -105,12 +111,15 @@ internal class ResultCall<T>(
                     call: Call<T>,
                     t: Throwable,
                 ) {
+                    // --- START MODIFICATION ---
                     val error =
                         when (t) {
                             is SocketTimeoutException -> AppError.NetworkError.Timeout
+                            is SSLPeerUnverifiedException -> AppError.NetworkError.CertificateMismatch
                             is IOException -> AppError.NetworkError.NoConnection
                             else -> AppError.NetworkError.Unexpected(t)
                         }
+                    // --- END MODIFICATION ---
                     callback.onResponse(this@ResultCall, Response.success(Result.failure(AppException(error))))
                 }
             },
