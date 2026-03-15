@@ -33,9 +33,9 @@ detekt {
     allRules = false
     // Exclude build/ and generated/ dirs (KSP adapters, kspCaches) from analysis
     source.setFrom(
-        fileTree("core") { exclude("**/build/**") },
-        fileTree("feature") { exclude("**/build/**") },
-        fileTree("infra") { exclude("**/build/**") },
+        fileTree("core") { exclude("**/build/**", "**/bin/**") },
+        fileTree("feature") { exclude("**/build/**", "**/bin/**") },
+        fileTree("infra") { exclude("**/build/**", "**/bin/**") },
         fileTree("app/src"),
         fileTree("build-logic"),
     )

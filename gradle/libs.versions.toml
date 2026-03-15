@@ -106,6 +106,9 @@ browser = { group = "androidx.browser", name = "browser", version = "1.8.0" }
 # Protobuf
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 
+# Apache POI (Excel export — xlsx only, no OLE2)
+poi-ooxml = { group = "org.apache.poi", name = "poi-ooxml", version = "5.3.0" }
+
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-android-ext = { group = "androidx.test.ext", name = "junit", version.ref = "junitAndroidExt" }

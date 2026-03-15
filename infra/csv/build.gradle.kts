@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.coroutines.android)
+    implementation(libs.poi.ooxml)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
 }

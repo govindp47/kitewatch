@@ -32,6 +32,7 @@ fun SettingsRoute(
     onNavigateToGuidebook: () -> Unit = {},
     onNavigateToPrivacy: () -> Unit = {},
     onNavigateToBackupRestore: () -> Unit = {},
+    onNavigateToCsvImport: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -55,6 +56,7 @@ fun SettingsRoute(
                 onNavigateToGuidebook = onNavigateToGuidebook,
                 onNavigateToPrivacy = onNavigateToPrivacy,
                 onNavigateToBackupRestore = onNavigateToBackupRestore,
+                onNavigateToCsvImport = onNavigateToCsvImport,
             ),
         modifier = modifier,
     )
@@ -135,6 +137,13 @@ internal fun SettingsScreen(
                     label = "Backup & Restore",
                     subtitle = "Back up data to Drive or restore from a file",
                     onClick = navigation.onNavigateToBackupRestore,
+                )
+            }
+            item {
+                SettingsRow(
+                    label = "Import CSV",
+                    subtitle = "Import orders from a Kite Trade Book or Orders CSV",
+                    onClick = navigation.onNavigateToCsvImport,
                 )
             }
             item { HorizontalDivider() }
