@@ -31,6 +31,10 @@ jobs:
       - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Decode google-services.json
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/google-services.json
+
       - name: Decode keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
@@ -45,6 +49,20 @@ jobs:
           KITE_API_KEY=${{ secrets.KITE_API_KEY }}
           GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
           EOF
+
+      # --- START MODIFICATION ---
+      # [FM-004] Build Cloud Functions TypeScript before Android build
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build Cloud Functions
+        run: |
+          cd functions
+          npm ci
+          npm run build
+      # --- END MODIFICATION ---
 
       - name: Unit tests
         run: ./gradlew testDebugUnitTest --no-daemon
@@ -70,4 +88,4 @@ jobs:
       - name: Clean up secrets
         if: always()
         run: |
-          rm -f keystore.jks secrets.properties
+          rm -f keystore.jks secrets.properties app/google-services.json
