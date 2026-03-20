@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.google.services) apply false
 }
 
 // Apply ktlint to all subprojects

@@ -48,3 +48,7 @@ include(":infra:worker")
 include(":infra:auth")
 include(":infra:backup")
 include(":infra:csv")
+// --- START MODIFICATION ---
+// [FM-002]
+include(":infra:firebase")
+// --- END MODIFICATION ---

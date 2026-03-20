@@ -5,6 +5,10 @@ plugins {
     alias(libs.plugins.kitewatch.android.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    // --- START MODIFICATION ---
+    // [FM-001] Apply Google Services plugin for google-services.json processing
+    alias(libs.plugins.google.services)
+    // --- END MODIFICATION ---
 }
 
 // Load secrets.properties — falls back gracefully to empty if absent (CI injects via env)
@@ -49,6 +53,11 @@ android {
             isDebuggable = true
             isMinifyEnabled = false
             buildConfigField("String", "BUILD_VARIANT", "\"debug\"")
+            // --- START MODIFICATION ---
+            // [FM-003] Firebase migration feature flags — false until Phase 2 validation
+            buildConfigField("Boolean", "FEATURE_FIREBASE_AUTH", "false")
+            buildConfigField("Boolean", "FEATURE_FIREBASE_PROXY", "false")
+            // --- END MODIFICATION ---
         }
         create("staging") {
             applicationIdSuffix = ".staging"
@@ -63,6 +72,11 @@ android {
             buildConfigField("String", "BUILD_VARIANT", "\"staging\"")
             // Library modules only publish debug/release; fall back to release for staging.
             matchingFallbacks += "release"
+            // --- START MODIFICATION ---
+            // [FM-003] Firebase migration feature flags — updated to true in FM-013 post-OAuth validation
+            buildConfigField("Boolean", "FEATURE_FIREBASE_AUTH", "false")
+            buildConfigField("Boolean", "FEATURE_FIREBASE_PROXY", "false")
+            // --- END MODIFICATION ---
         }
         release {
             isDebuggable = false
@@ -74,6 +88,11 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
             buildConfigField("String", "BUILD_VARIANT", "\"release\"")
+            // --- START MODIFICATION ---
+            // [FM-003] Firebase migration feature flags — updated to true in FM-038 post-final validation
+            buildConfigField("Boolean", "FEATURE_FIREBASE_AUTH", "false")
+            buildConfigField("Boolean", "FEATURE_FIREBASE_PROXY", "false")
+            // --- END MODIFICATION ---
         }
     }
 
@@ -127,6 +146,19 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.navigation.compose)
     implementation(libs.timber)
+
+    // --- START MODIFICATION ---
+    // [FM-001] Firebase BOM and dependencies
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.functions.ktx)
+    // --- END MODIFICATION ---
+
+    // --- START MODIFICATION ---
+    // [FM-002] infra-firebase module
+    implementation(project(":infra:firebase"))
+    // --- END MODIFICATION ---
 
     testImplementation(libs.junit)
 }

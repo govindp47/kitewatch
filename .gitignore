@@ -51,3 +51,7 @@ ehthumbs.db
 
 # Detekt reports (generated on each run)
 **/build/reports/detekt/
+
+# Firebase Cloud Functions build artefacts
+functions/node_modules/
+functions/lib/
